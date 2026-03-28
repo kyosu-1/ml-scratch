@@ -86,7 +86,10 @@ class MCTSNode:
     def ucb1(self, c: float = 1.41) -> float:
         if self.visits == 0:
             return float("inf")
-        win_rate = self.value / self.visits
+        # 親が子を選ぶ。親のcurrent_playerにとって良い子を選ぶ。
+        # valueには result をそのまま蓄積する。
+        # 親の current_player に合わせて符号を調整。
+        win_rate = (self.value * self.parent.state.current_player) / self.visits
         exploration = c * np.sqrt(np.log(self.parent.visits) / self.visits)
         return win_rate + exploration
 
@@ -145,9 +148,16 @@ class MCTS:
         return float(winner)
 
     def _backpropagate(self, node: MCTSNode, result: float):
-        """結果を根まで伝播"""
+        """結果を根まで伝播
+
+        selectで親が子を選ぶとき、子のvalue/visitsが高いものを選ぶ。
+        子のvalueには「その手を打ったプレイヤーにとっての価値」を蓄積する。
+
+        子のstate.current_playerは step() で反転済みなので「次に打つ人」。
+        その手を打ったのは -state.current_player。
+        result * (-state.current_player) が正なら、打った人にとって良い結果。
+        """
         while node is not None:
             node.visits += 1
-            # そのノードの手番のプレイヤーから見た価値
-            node.value += result * node.state.current_player * -1
+            node.value += result  # resultをそのまま蓄積、UCB1で符号調整
             node = node.parent
