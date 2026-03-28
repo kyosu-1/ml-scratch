@@ -88,7 +88,7 @@ def value_iteration(env: GridWorld, gamma: float = 1.0, theta: float = 1e-6):
     return V, policy
 
 
-def policy_iteration(env: GridWorld, gamma: float = 1.0, theta: float = 1e-6):
+def policy_iteration(env: GridWorld, gamma: float = 0.99, theta: float = 1e-6):
     """方策反復法"""
     policy = np.zeros(env.n_states, dtype=int)
     V = np.zeros(env.n_states)
