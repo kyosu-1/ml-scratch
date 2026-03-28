@@ -96,3 +96,58 @@ class TestTDLearning:
 
         # Q値が更新されていること
         assert not np.allclose(agent.q_table, 0)
+
+
+class TestREINFORCE:
+    def test_update_changes_weights(self):
+        from rl.policy_gradient.reinforce import REINFORCE
+        agent = REINFORCE(n_features=4, n_actions=2, lr=0.01)
+        w_before = agent.W.copy()
+
+        # ダミーエピソード
+        episode = [
+            (np.random.randn(4), 0, 1.0),
+            (np.random.randn(4), 1, -1.0),
+            (np.random.randn(4), 0, 0.5),
+        ]
+        agent.update(episode)
+        assert not np.allclose(agent.W, w_before)
+
+    def test_action_selection(self):
+        from rl.policy_gradient.reinforce import REINFORCE
+        agent = REINFORCE(n_features=4, n_actions=3)
+        state = np.random.randn(4)
+        action = agent.select_action(state)
+        assert 0 <= action < 3
+
+
+class TestDQN:
+    def test_dqn_trains(self):
+        from rl.dqn.dqn import DQN
+        agent = DQN(state_dim=4, action_dim=2, hidden_dim=16, batch_size=8, buffer_size=100)
+
+        # バッファにデータを溜める
+        for _ in range(20):
+            s = np.random.randn(4)
+            a = agent.select_action(s)
+            r = np.random.randn()
+            s_next = np.random.randn(4)
+            done = np.random.random() > 0.8
+            agent.store_transition(s, a, r, s_next, done)
+
+        # 学習が実行できること
+        loss = agent.train()
+        assert loss is not None
+        assert loss >= 0
+
+    def test_epsilon_decays(self):
+        from rl.dqn.dqn import DQN
+        agent = DQN(state_dim=2, action_dim=2, epsilon=1.0, epsilon_decay=0.9, batch_size=4, buffer_size=50, hidden_dim=8)
+        initial_eps = agent.epsilon
+
+        for _ in range(10):
+            s = np.random.randn(2)
+            agent.store_transition(s, 0, 1.0, np.random.randn(2), False)
+
+        agent.train()
+        assert agent.epsilon < initial_eps
