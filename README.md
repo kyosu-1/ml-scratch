@@ -31,8 +31,14 @@ rl/                 # 強化学習
   policy_gradient/  # REINFORCE
   dqn/              # DQN (Experience Replay, Target Network)
 
+llm/                # LLM (GPT フルスクラッチ)
+  tokenizer/        # BPEトークナイザー
+  model/            # GPT (Causal Self-Attention, Positional Encoding)
+  train.py          # 次トークン予測学習ループ
+  generate.py       # テキスト生成 (Greedy, Temperature, Top-k, Top-p)
+
 utils/              # データ生成, 評価指標
-tests/              # テスト (56 tests)
+tests/              # テスト (64 tests)
 examples/           # 使用例
 ```
 
@@ -57,6 +63,7 @@ predictions = model.predict(X_test)
 PYTHONPATH=. uv run python examples/ml/example_ml.py
 PYTHONPATH=. uv run python examples/dl/example_dl.py
 PYTHONPATH=. uv run python examples/rl/example_rl.py
+PYTHONPATH=. uv run python examples/llm/example_llm.py
 ```
 
 テスト:
