@@ -6,34 +6,40 @@
 
 ```
 ml/                 # 機械学習
-  linear_models/    # 線形回帰, ロジスティック回帰
-  tree/             # 決定木, CART
+  linear_models/    # 線形回帰, ロジスティック回帰, Ridge, Lasso
+  tree/             # 決定木 (CART, 分類・回帰)
   svm/              # サポートベクターマシン
+  neighbors/        # KNN (分類・回帰)
   clustering/       # K-Means, DBSCAN
   dimensionality_reduction/  # PCA, t-SNE
   ensemble/         # Random Forest, Gradient Boosting
-  naive_bayes/      # ナイーブベイズ
+  naive_bayes/      # ガウシアンナイーブベイズ
 
 dl/                 # 深層学習
-  layers/           # Linear, Conv2D, BatchNorm, etc.
-  activations/      # ReLU, Sigmoid, Softmax, etc.
-  losses/           # CrossEntropy, MSE
-  optimizers/       # SGD, Adam
+  layers/           # Linear, Conv2D, BatchNorm, Dropout, RNN, LSTM, GRU,
+                    # Embedding, MaxPool2D, Flatten,
+                    # Multi-Head Attention, Transformer Block
+  activations/      # ReLU, Sigmoid, Tanh, Softmax
+  losses/           # MSE, CrossEntropy, BinaryCrossEntropy
+  optimizers/       # SGD (momentum), Adam
   models/           # Sequential モデル
 
 rl/                 # 強化学習
   bandits/          # 多腕バンディット (Epsilon-Greedy, UCB)
   dynamic_programming/  # 価値反復, 方策反復
   td_learning/      # Q-Learning, SARSA
+  policy_gradient/  # REINFORCE
+  dqn/              # DQN (Experience Replay, Target Network)
 
-utils/              # ユーティリティ（データ生成, 評価指標, 可視化）
+utils/              # データ生成, 評価指標
+tests/              # テスト (56 tests)
 examples/           # 使用例
 ```
 
 ## セットアップ
 
 ```bash
-pip install -e .
+uv sync
 ```
 
 ## 使い方
@@ -44,6 +50,18 @@ from ml.linear_models.linear_regression import LinearRegression
 model = LinearRegression(lr=0.01, n_iters=1000)
 model.fit(X_train, y_train)
 predictions = model.predict(X_test)
+```
+
+サンプル実行:
+```bash
+PYTHONPATH=. uv run python examples/ml/example_ml.py
+PYTHONPATH=. uv run python examples/dl/example_dl.py
+PYTHONPATH=. uv run python examples/rl/example_rl.py
+```
+
+テスト:
+```bash
+PYTHONPATH=. uv run pytest tests/ -v
 ```
 
 ## 方針
